@@ -13,7 +13,7 @@
 #include <SerialFlash.h>
 
 // Neural network setup and functions START
-const size_t nInputs=2;
+const size_t nInputs=4;
 const size_t nOutputs=2;
 const size_t patternElements=10;
 const size_t patternSize = patternElements * nInputs;
@@ -110,15 +110,21 @@ void printTrainingData() {
 // Neural network setup and functions END
 
 // Hardware initializations START
-int angle1pin = 41;
-int angle2pin = 40;
-int angle1;
-int angle2;
+int elbowLpin = 41;
+int elbowRpin = 40;
+int shoulderLpin = TBD;
+int shoulderRpin = TBD;
+int elbowL;
+int elbowR;
+int shoulderL;
+int shoulderR;
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(angle1pin, INPUT);
-  pinMode(angle2pin, INPUT);
+  pinMode(elbowLpin, INPUT);
+  pinMode(elbowRpin, INPUT);
+  pinMode(shouderLpin, INPUT);
+  pinMode(shoulderRpin, INPUT);
 
   Serial.begin(115200);
   Serial.setTimeout(1);
@@ -127,11 +133,15 @@ void setup() {
 std::vector<float> p(patternSize);
 void loop() {
   // put your main code here, to run repeatedly:
-  angle1 = analogRead(angle1pin);
-  angle2 = analogRead(angle2pin);
+  elbowL = analogRead(elbowLpin);
+  elbowR = analogRead(elbowRpin);
+  shoulderL = analogRead(elbowLpin);
+  shoulderR = analogRead(elbowRpin);
 
-  patternBuffer.push(angle1/1023.0);
-  patternBuffer.push(angle2/1023.0);
+  patternBuffer.push(elbowL/1023.0);
+  patternBuffer.push(elbowR/1023.0);
+  patternBuffer.push(shoulderL/1023.0);
+  patternBuffer.push(shoulderR/1023.0);
   patternBuffer.copyToArray(p.data());
 
   if (Serial.available()) {
