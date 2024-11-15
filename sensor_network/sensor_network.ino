@@ -110,21 +110,30 @@ void printTrainingData() {
 // Neural network setup and functions END
 
 // Hardware initializations START
+// instrument sensors
 int elbowLpin = 41;
 int elbowRpin = 40;
-int shoulderLpin = TBD;
-int shoulderRpin = TBD;
+int shoulderLpin = 39; //actual port TBD
+int shoulderRpin = 38; //actual port TBD
 int elbowL;
 int elbowR;
 int shoulderL;
 int shoulderR;
 
+// latent space sensors
+int latent1pin = 24; //actual port TBD
+int latent2pin = 25; //actual port TBD
+int latent1;
+int latent2;
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(elbowLpin, INPUT);
   pinMode(elbowRpin, INPUT);
-  pinMode(shouderLpin, INPUT);
+  pinMode(shoulderLpin, INPUT);
   pinMode(shoulderRpin, INPUT);
+  pinMode(latent1pin, INPUT);
+  pinMode(latent2pin, INPUT);
 
   Serial.begin(115200);
   Serial.setTimeout(1);
@@ -135,8 +144,10 @@ void loop() {
   // put your main code here, to run repeatedly:
   elbowL = analogRead(elbowLpin);
   elbowR = analogRead(elbowRpin);
-  shoulderL = analogRead(elbowLpin);
-  shoulderR = analogRead(elbowRpin);
+  shoulderL = analogRead(shoulderLpin);
+  shoulderR = analogRead(shoulderRpin);
+  latent1 = analogRead(latent1pin);
+  latent2 = analogRead(latent2pin);
 
   patternBuffer.push(elbowL/1023.0);
   patternBuffer.push(elbowR/1023.0);
@@ -212,6 +223,10 @@ void loop() {
       Serial.print(output[j], 7);       // Prints the first 7 digits after the comma.
       Serial.print("\t");
     }
+    Serial.print(latent1);
+    Serial.print("\t");
+    Serial.print(latent2);
+    Serial.print("\t");
     Serial.println("");
   }
   delay(100);

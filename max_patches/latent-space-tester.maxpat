@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 76.0, 1577.0, 870.0 ],
+		"rect" : [ 34.0, 76.0, 1302.0, 870.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,6 +40,99 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-103",
+					"maxclass" : "newobj",
+					"numinlets" : 6,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1310.0, 226.538471221923828, 107.0, 22.0 ],
+					"text" : "scale 200 500 -5 5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-102",
+					"maxclass" : "newobj",
+					"numinlets" : 6,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1190.0, 226.538471221923828, 107.0, 22.0 ],
+					"text" : "scale 200 500 -5 5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-101",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 1266.0, 255.0, 63.0, 20.0 ],
+					"text" : "Latent 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-100",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 1190.0, 255.0, 63.0, 20.0 ],
+					"text" : "Latent 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-99",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 993.346248626708984, 255.0, 75.0, 20.0 ],
+					"presentation_linecount" : 2,
+					"text" : "Violin level"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-98",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 1090.76933479309082, 255.0, 63.0, 20.0 ],
+					"text" : "Sax level"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-66",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1266.0, 194.230775833129883, 75.0, 22.0 ],
+					"text" : "264."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-61",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1190.0, 194.230775833129883, 66.0, 22.0 ],
+					"text" : "319."
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"format" : 6,
 					"id" : "obj-42",
 					"maxclass" : "flonum",
@@ -60,7 +153,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 321.75, 278.0, 50.0, 22.0 ]
+					"patching_rect" : [ 310.0, 293.0, 50.0, 22.0 ]
 				}
 
 			}
@@ -73,7 +166,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 263.0, 278.0, 50.0, 22.0 ]
+					"patching_rect" : [ 251.0, 293.0, 50.0, 22.0 ]
 				}
 
 			}
@@ -84,7 +177,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 332.0, 313.0, 29.5, 22.0 ],
+					"patching_rect" : [ 320.0, 328.0, 29.5, 22.0 ],
 					"text" : "* 4."
 				}
 
@@ -96,7 +189,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 296.0, 313.0, 29.5, 22.0 ],
+					"patching_rect" : [ 284.0, 328.0, 29.5, 22.0 ],
 					"text" : "* 2."
 				}
 
@@ -108,7 +201,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 446.0, 125.0, 35.0, 22.0 ],
+					"patching_rect" : [ 316.0, 155.0, 35.0, 22.0 ],
 					"text" : "clear"
 				}
 
@@ -120,7 +213,7 @@
 					"numinlets" : 6,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 346.0, 346.0, 130.0, 22.0 ],
+					"patching_rect" : [ 334.0, 361.0, 130.0, 22.0 ],
 					"text" : "scale~ 0. 1. 500. 1500."
 				}
 
@@ -132,7 +225,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "signal", "bang" ],
-					"patching_rect" : [ 383.0, 305.0, 34.0, 22.0 ],
+					"patching_rect" : [ 371.0, 320.0, 34.0, 22.0 ],
 					"text" : "line~"
 				}
 
@@ -147,7 +240,7 @@
 					"numoutlets" : 4,
 					"outlettype" : [ "float", "", "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 328.0, 169.0, 200.0, 100.0 ]
+					"patching_rect" : [ 316.0, 184.0, 200.0, 100.0 ]
 				}
 
 			}
@@ -158,7 +251,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 390.0, 125.0, 35.0, 22.0 ],
+					"patching_rect" : [ 94.0, 155.0, 35.0, 22.0 ],
 					"text" : "clear"
 				}
 
@@ -170,7 +263,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "signal", "bang" ],
-					"patching_rect" : [ 166.0, 278.0, 34.0, 22.0 ],
+					"patching_rect" : [ 154.0, 293.0, 34.0, 22.0 ],
 					"text" : "line~"
 				}
 
@@ -185,7 +278,7 @@
 					"numoutlets" : 4,
 					"outlettype" : [ "float", "", "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 106.0, 169.0, 200.0, 100.0 ]
+					"patching_rect" : [ 94.0, 184.0, 200.0, 100.0 ]
 				}
 
 			}
@@ -257,7 +350,8 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 30.0, 94.0, 336.0, 53.0 ]
+					"patching_rect" : [ 30.0, 94.0, 420.0, 53.0 ],
+					"range" : 60
 				}
 
 			}
@@ -288,12 +382,12 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-73",
-					"linecount" : 11,
+					"linecount" : 25,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 1232.0, 497.0, 320.0, 158.0 ],
-					"text" : "Saxophone Latent Space dimension notes\n- D1 in the - gives constant random notes at all times, as well as cool screechy/breathy sounds when played. Does nothing in the +.\n- D2 kind of muffles the low freqs at + values and muffles the high freqs at - values.\n- D3 uninteresting\n- D4 almost makes it sound like a string, high +/- values seemt to remove the \"breathiness\" of the sound\n- D5 is almost like a super slight pitch shift? Downshift is more noticeable than upshift"
+					"patching_rect" : [ 1225.0, 446.0, 320.0, 351.0 ],
+					"text" : "Saxophone Latent Space dimension notes\n- D1 in the - gives constant random notes at all times, as well as cool screechy/breathy sounds when played. Does nothing in the +.\n- D2 kind of muffles the low freqs at + values and muffles the high freqs at - values.\n- D3 uninteresting\n- D4 almost makes it sound like a string, high +/- values seemt to remove the \"breathiness\" of the sound\n- D5 is almost like a super slight pitch shift? Downshift is more noticeable than upshift\n- D6 controls something like the amount of spit/wetness of the reed (+ is more spit, - is less)\n- D7 feels like the amount of breath in the attack\n- D8 +1.5 to +4~ has a trill-like sound\n- D9 hard to tell what its doing\n- D10 -2 to -4 produce a kind of downward tremolo?\n- D11 high + values sort of detune the note, low - sound airy, maybe analogoue to lip pressure on the reed?\n- D12 high + values make the sound shorter or more staccato\n- D13 values below -3 produce a high trill effect\n- D14 sort of adds harmonics?\n- D15 uninteresting\n- D16 uninteresting"
 				}
 
 			}
@@ -4475,7 +4569,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 1090.76933479309082, 194.230775833129883, 87.0, 22.0 ],
-					"text" : "0.470231"
+					"text" : "0.739232"
 				}
 
 			}
@@ -4487,7 +4581,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 993.846248626708984, 194.230775833129883, 87.0, 22.0 ],
-					"text" : "0.530461"
+					"text" : "0.759528"
 				}
 
 			}
@@ -4496,10 +4590,10 @@
 					"id" : "obj-70",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "float", "float" ],
-					"patching_rect" : [ 993.846248626708984, 158.846157073974609, 61.0, 22.0 ],
-					"text" : "unpack f f"
+					"numoutlets" : 4,
+					"outlettype" : [ "float", "float", "float", "float" ],
+					"patching_rect" : [ 993.846248626708984, 158.846157073974609, 74.0, 22.0 ],
+					"text" : "unpack f f f f"
 				}
 
 			}
@@ -4607,7 +4701,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 993.846248626708984, 125.0, 183.0, 22.0 ],
-					"text" : "0.528313 0.472422"
+					"text" : "0.759436 0.739779 321 264"
 				}
 
 			}
@@ -4816,6 +4910,20 @@
 				"patchline" : 				{
 					"destination" : [ "obj-30", 0 ],
 					"source" : [ "obj-10", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-20", 0 ],
+					"source" : [ "obj-102", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-9", 0 ],
+					"source" : [ "obj-103", 0 ]
 				}
 
 			}
@@ -5124,7 +5232,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-48", 0 ],
-					"order" : 3,
+					"order" : 5,
 					"source" : [ "obj-47", 0 ]
 				}
 
@@ -5132,14 +5240,14 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-54", 0 ],
-					"order" : 2,
+					"order" : 4,
 					"source" : [ "obj-47", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-72", 0 ],
+					"destination" : [ "obj-61", 0 ],
 					"order" : 1,
 					"source" : [ "obj-47", 0 ]
 				}
@@ -5147,8 +5255,24 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-74", 0 ],
+					"destination" : [ "obj-66", 0 ],
 					"order" : 0,
+					"source" : [ "obj-47", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-72", 0 ],
+					"order" : 3,
+					"source" : [ "obj-47", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-74", 0 ],
+					"order" : 2,
 					"source" : [ "obj-47", 0 ]
 				}
 
@@ -5269,6 +5393,13 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-102", 0 ],
+					"source" : [ "obj-61", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-58", 1 ],
 					"source" : [ "obj-63", 0 ]
 				}
@@ -5290,6 +5421,13 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-103", 0 ],
+					"source" : [ "obj-66", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-69", 0 ],
 					"source" : [ "obj-67", 0 ]
 				}
@@ -5306,6 +5444,20 @@
 				"patchline" : 				{
 					"destination" : [ "obj-5", 0 ],
 					"source" : [ "obj-7", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-61", 1 ],
+					"source" : [ "obj-70", 2 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-66", 1 ],
+					"source" : [ "obj-70", 3 ]
 				}
 
 			}
