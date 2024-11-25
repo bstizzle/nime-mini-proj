@@ -229,5 +229,14 @@ void loop() {
     Serial.print("\t");
     Serial.println("");
   }
+
+  Serial.print("LE: ");
+  Serial.println(elbowL);
+  Serial.print("RE: ");
+  Serial.println(elbowR);
+  Serial.print("LS: ");
+  Serial.println(shoulderL);
+  Serial.print("RS: ");
+  Serial.println(shoulderR);
   delay(100);
 }
