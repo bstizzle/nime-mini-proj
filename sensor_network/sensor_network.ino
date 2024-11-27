@@ -11,6 +11,7 @@
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
+#include <WiiChuck.h>
 
 // Neural network setup and functions START
 const size_t nInputs=4;
