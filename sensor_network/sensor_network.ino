@@ -127,6 +127,8 @@ int latent2pin = 25; //actual port TBD
 int latent1;
 int latent2;
 
+int chipSelect = BUILTIN_SDCARD;
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(elbowLpin, INPUT);
@@ -135,6 +137,10 @@ void setup() {
   pinMode(shoulderRpin, INPUT);
   pinMode(latent1pin, INPUT);
   pinMode(latent2pin, INPUT);
+
+  if (!SD.begin(chipSelect)) {
+    Serial.println("Could not start SD card");
+  }
 
   Serial.begin(115200);
   Serial.setTimeout(1);
@@ -231,6 +237,7 @@ void loop() {
     Serial.println("");
   }
 
+/*
   Serial.print("LE: ");
   Serial.println(elbowL);
   Serial.print("RE: ");
@@ -239,5 +246,7 @@ void loop() {
   Serial.println(shoulderL);
   Serial.print("RS: ");
   Serial.println(shoulderR);
+  
   delay(100);
+*/
 }
