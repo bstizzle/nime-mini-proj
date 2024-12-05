@@ -15,7 +15,7 @@
 
 // Neural network setup and functions START
 const size_t nInputs=4;
-const size_t nOutputs=2;
+const size_t nOutputs=3;
 const size_t patternElements=10;
 const size_t patternSize = patternElements * nInputs;
 
@@ -33,9 +33,10 @@ NNMODES nnMode = NNMODES::TRAINING;
 NeuralNetwork NN(layers, NumberOf(layers)); // Creating a Neural-Network with default learning-rates
 
 std::vector<std::vector<float>> expectedOutput {
-  {1,0}, //all violin
-  {0,1}, //all sax
-  {0.5, 0.5} //halfway between violin and sax
+  {1,0,0}, //all violin
+  {0,1,0}, //all sax
+  {0,0,1}, //all pond sounds
+  {0.5, 0.5, 0} //halfway between violin and sax
 }; 
 
 void addTrainingPoint(std::vector<float> x, size_t y) { //training inputs, and index to a set of outputs defined in expectedOutputs
@@ -237,7 +238,7 @@ void loop() {
     Serial.println("");
   }
 
-/*
+
   Serial.print("LE: ");
   Serial.println(elbowL);
   Serial.print("RE: ");
@@ -248,5 +249,5 @@ void loop() {
   Serial.println(shoulderR);
   
   delay(100);
-*/
+
 }
