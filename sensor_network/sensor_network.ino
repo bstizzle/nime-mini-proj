@@ -60,6 +60,11 @@ NNMODES nnLatMode = NNMODES::TRAINING;
 NeuralNetwork NNlat(layersLat, NumberOf(layersLat)); // Creating a Neural-Network with default learning-rates
 
 std::vector<std::vector<float>> expectedLatOutput {
+  {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5},
+  {0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1},
+  {0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0},
+  {1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5},
+  {0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5},
   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 }; 
@@ -441,8 +446,13 @@ void loop() {
   }
   
   if (nnLatMode == NNMODES::INFERENCE) {
+    outputInst = NNinst.FeedForward(pInst.data());
     outputLat = NNlat.FeedForward(pLat.data());
     
+    for(size_t j=0; j < nInstOutputs; j++) {
+      Serial.print(outputInst[j], 7);       // Prints the first 7 digits after the comma.
+      Serial.print("\t");
+    }
     for(size_t j=0; j < nLatOutputs; j++) {
       Serial.print(outputLat[j], 7);       // Prints the first 7 digits after the comma.
       Serial.print("\t");
