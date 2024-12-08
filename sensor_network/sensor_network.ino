@@ -12,101 +12,214 @@
 #include <SD.h>
 #include <SerialFlash.h>
 #include <WiiChuck.h>
+#include <WiiChuck.h>
+
+Accessory nunchuck1;
 
 // Neural network setup and functions START
-const size_t nInputs=4;
-const size_t nOutputs=3;
-const size_t patternElements=10;
-const size_t patternSize = patternElements * nInputs;
+const size_t nInstInputs=6;
+const size_t nInstOutputs=3;
+const size_t patternInstElements=10;
+const size_t patternInstSize = patternInstElements * nInstInputs;
 
-const unsigned int layers[] = {patternSize, 20, 20, nOutputs}; // 3 layers (1st)layer with 3 input neurons (2nd)layer 5 hidden neurons each and (3rd)layer with 1 output neuron
-float *output; 
+const unsigned int layersInst[] = {patternInstSize, 20, 20, nInstOutputs}; // 3 layers (1st)layer with 3 input neurons (2nd)layer 5 hidden neurons each and (3rd)layer with 1 output neuron
+float *outputInst; 
 
-std::vector<std::vector<float> > trainingInputs;
-std::vector<std::vector<float> > trainingOutputs;
+std::vector<std::vector<float> > trainingInstInputs;
+std::vector<std::vector<float> > trainingInstOutputs;
 
-CircularBuffer<float, patternSize> patternBuffer;
+CircularBuffer<float, patternInstSize> patternInstBuffer;
 
 enum NNMODES {TRAINING, INFERENCE};
 NNMODES nnMode = NNMODES::TRAINING;
 
-NeuralNetwork NN(layers, NumberOf(layers)); // Creating a Neural-Network with default learning-rates
+NeuralNetwork NNinst(layersInst, NumberOf(layersInst)); // Creating a Neural-Network with default learning-rates
 
-std::vector<std::vector<float>> expectedOutput {
+std::vector<std::vector<float>> expectedInstOutput {
   {1,0,0}, //all violin
   {0,1,0}, //all sax
   {0,0,1}, //all pond sounds
   {0.5, 0.5, 0} //halfway between violin and sax
 }; 
 
-void addTrainingPoint(std::vector<float> x, size_t y) { //training inputs, and index to a set of outputs defined in expectedOutputs
-  if (x.size() == patternSize) {
-    trainingInputs.push_back(x);
-    trainingOutputs.push_back(expectedOutput[y]);
-    Serial.print("Training point added: ");
-    for(auto &v: x) {
-      Serial.print(v);
-      Serial.print("\t");
+const size_t nLatInputs=4;
+const size_t nLatOutputs=16;
+const size_t patternLatElements=10;
+const size_t patternLatSize = patternLatElements * nLatInputs;
+
+const unsigned int layersLat[] = {patternLatSize, 10, 10, nLatOutputs}; // 3 layers (1st)layer with 3 input neurons (2nd)layer 5 hidden neurons each and (3rd)layer with 1 output neuron
+float *outputLat; 
+
+std::vector<std::vector<float> > trainingLatInputs;
+std::vector<std::vector<float> > trainingLatOutputs;
+
+CircularBuffer<float, patternLatSize> patternLatBuffer;
+
+NNMODES nnLatMode = NNMODES::TRAINING;
+
+NeuralNetwork NNlat(layersLat, NumberOf(layersLat)); // Creating a Neural-Network with default learning-rates
+
+std::vector<std::vector<float>> expectedLatOutput {
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+}; 
+
+void addTrainingPoint(std::vector<float> x, size_t y, String type) { //training inputs, and index to a set of outputs defined in expectedOutputs
+  if(type == "i")
+  {
+    if (x.size() == patternInstSize) {
+      trainingInstInputs.push_back(x);
+      trainingInstOutputs.push_back(expectedInstOutput[y]);
+      Serial.print("Instrument training point added: ");
+      for(auto &v: x) {
+        Serial.print(v);
+        Serial.print("\t");
+      }
+      Serial.print(" Output: ");
+      Serial.println(y);
+    }else{
+      Serial.print("The number of inputs should be: ");
+      Serial.println(patternInstSize);
     }
-    Serial.print(" Output: ");
-    Serial.println(y);
-  }else{
-    Serial.print("The number of inputs should be: ");
-    Serial.println(patternSize);
+  }
+  else if(type == "l")
+  {
+    if (x.size() == patternLatSize) {
+      trainingLatInputs.push_back(x);
+      trainingLatOutputs.push_back(expectedLatOutput[y]);
+      Serial.print("Latent training point added: ");
+      for(auto &v: x) {
+        Serial.print(v);
+        Serial.print("\t");
+      }
+      Serial.print(" Output: ");
+      Serial.println(y);
+    }else{
+      Serial.print("The number of inputs should be: ");
+      Serial.println(patternLatSize);
+    }
   }
 }
 
-void undoLastTraining() {
-  if (trainingInputs.size() > 0) {
-    trainingInputs.pop_back();
-    trainingOutputs.pop_back();
-    Serial.println("Removed most recent training point");
-  }else{
-    Serial.println("There are no training points to remove");
+void undoLastTraining(String type) {
+  if(type == "i")
+  {
+    if(trainingInstInputs.size() > 0) {
+      trainingInstInputs.pop_back();
+      trainingInstOutputs.pop_back();
+      Serial.println("Removed most recent training point");
+    }else{
+      Serial.println("There are no training points to remove");
+    }
+  }
+  else if(type == "l")
+  {
+    if(trainingInstInputs.size() > 0) {
+      trainingInstInputs.pop_back();
+      trainingInstOutputs.pop_back();
+      Serial.println("Removed most recent training point");
+    }else{
+      Serial.println("There are no training points to remove");
+    }
   }
 }
 
-void train() {
+void train(String type) {
   size_t maxEpochs = 500;
-  do{ 
-    for (unsigned int j = 0; j < trainingInputs.size(); j++) // Epoch
-    {
-      NN.FeedForward(trainingInputs[j].data());      // FeedForwards the input arrays through the NN | stores the output array internally
-      NN.BackProp(trainingOutputs[j].data()); // "Tells" to the NN if the output was the-expected-correct one | then, "teaches" it
-    }
-    
-    // Prints the Error.
-    Serial.print("MSE: "); 
-    // Serial.println(NN.MeanSqrdError,6);
-    Serial.println(NN.CategoricalCrossEntropy,6);
-  }while(NN.getCategoricalCrossEntropy(trainingInputs.size()) > 0.0001 && maxEpochs-- > 0);
+  if(type == "i")
+  {
+    do{ 
+      for (unsigned int j = 0; j < trainingInstInputs.size(); j++) // Epoch
+      {
+        NNinst.FeedForward(trainingInstInputs[j].data());      // FeedForwards the input arrays through the NN | stores the output array internally
+        NNinst.BackProp(trainingInstOutputs[j].data()); // "Tells" to the NN if the output was the-expected-correct one | then, "teaches" it
+      }
+      
+      // Prints the Error.
+      Serial.print("MSE: "); 
+      // Serial.println(NN.MeanSqrdError,6);
+      Serial.println(NNinst.CategoricalCrossEntropy,6);
+    }while(NNinst.getCategoricalCrossEntropy(trainingInstInputs.size()) > 0.0001 && maxEpochs-- > 0);
+  }
+  else if(type == "l")
+  {
+    do{ 
+      for (unsigned int j = 0; j < trainingLatInputs.size(); j++) // Epoch
+      {
+        NNlat.FeedForward(trainingLatInputs[j].data());      // FeedForwards the input arrays through the NN | stores the output array internally
+        NNlat.BackProp(trainingLatOutputs[j].data()); // "Tells" to the NN if the output was the-expected-correct one | then, "teaches" it
+      }
+      
+      // Prints the Error.
+      Serial.print("MSE: "); 
+      // Serial.println(NN.MeanSqrdError,6);
+      Serial.println(NNlat.CategoricalCrossEntropy,6);
+    }while(NNlat.getCategoricalCrossEntropy(trainingLatInputs.size()) > 0.0001 && maxEpochs-- > 0);
+  }
 }
 
-void resetTraining() {
-  trainingInputs.clear();
-  trainingOutputs.clear();
-  Serial.println("Reset training data");
+void resetTraining(String type) {
+  if(type == "i")
+  {
+    trainingInstInputs.clear();
+    trainingInstOutputs.clear();
+    Serial.println("Reset instrument training data");
+  }
+  else if(type == "l")
+  {
+    trainingLatInputs.clear();
+    trainingLatOutputs.clear();
+    Serial.println("Reset latent training data");
+  }
 }
 
-void resetModel() {
-  NN = NeuralNetwork(layers, NumberOf(layers)); // Creating a Neural-Network with default learning-rates
+void resetModel(String type) {
+  if(type == "i")
+  {
+    NNinst = NeuralNetwork(layersInst, NumberOf(layersInst)); // Creating a Neural-Network with default learning-rates
+  }
+  else if(type == "l")
+  {
+    NNlat = NeuralNetwork(layersLat, NumberOf(layersLat)); // Creating a Neural-Network with default learning-rates
+  }
 }
 
-void printTrainingData() {
-  Serial.println("Training data:");
-  for(size_t i=0; i < trainingInputs.size(); i++) {
-    Serial.print(i);
-    Serial.print(": ");
-    for(size_t j=0; j < patternSize; j++) {
-      Serial.print(trainingInputs[i][j]);
-      Serial.print("\t");
+void printTrainingData(String type) {
+  if(type == "i")
+  {
+    Serial.println("Instrument training data:");
+    for(size_t i=0; i < trainingInstInputs.size(); i++) {
+      Serial.print(i);
+      Serial.print(": ");
+      for(size_t j=0; j < patternInstSize; j++) {
+        Serial.print(trainingInstInputs[i][j]);
+        Serial.print("\t");
+      }
+      Serial.print(" :: ");
+      for(size_t j=0; j < nInstOutputs; j++) {
+        Serial.print(trainingInstOutputs[i][j]);
+        Serial.print("\t");
+      }
+      Serial.println("");
     }
-    Serial.print(" :: ");
-    for(size_t j=0; j < nOutputs; j++) {
-      Serial.print(trainingOutputs[i][j]);
-      Serial.print("\t");
+  }
+  else if(type == "l")
+  {
+    Serial.println("Latent training data:");
+    for(size_t i=0; i < trainingLatInputs.size(); i++) {
+      Serial.print(i);
+      Serial.print(": ");
+      for(size_t j=0; j < patternLatSize; j++) {
+        Serial.print(trainingLatInputs[i][j]);
+        Serial.print("\t");
+      }
+      Serial.print(" :: ");
+      for(size_t j=0; j < nLatOutputs; j++) {
+        Serial.print(trainingLatOutputs[i][j]);
+        Serial.print("\t");
+      }
+      Serial.println("");
     }
-    Serial.println("");
   }
 }
 // Neural network setup and functions END
@@ -122,12 +235,6 @@ int elbowR;
 int shoulderL;
 int shoulderR;
 
-// latent space sensors
-int latent1pin = 24; //actual port TBD
-int latent2pin = 25; //actual port TBD
-int latent1;
-int latent2;
-
 int chipSelect = BUILTIN_SDCARD;
 
 void setup() {
@@ -136,89 +243,188 @@ void setup() {
   pinMode(elbowRpin, INPUT);
   pinMode(shoulderLpin, INPUT);
   pinMode(shoulderRpin, INPUT);
-  pinMode(latent1pin, INPUT);
-  pinMode(latent2pin, INPUT);
 
   if (!SD.begin(chipSelect)) {
     Serial.println("Could not start SD card");
   }
 
   Serial.begin(115200);
+  nunchuck1.begin();
+  if (nunchuck1.type == Unknown) {
+		/** If the device isn't auto-detected, set the type explicatly
+		 * 	NUNCHUCK,
+		 WIICLASSIC,
+		 GuitarHeroController,
+		 GuitarHeroWorldTourDrums,
+		 DrumController,
+		 DrawsomeTablet,
+		 Turntable
+		 */
+		nunchuck1.type = NUNCHUCK;
+	}
   Serial.setTimeout(1);
 }
 
-std::vector<float> p(patternSize);
+std::vector<float> pInst(patternInstSize);
+std::vector<float> pLat(patternLatSize);
 void loop() {
   // put your main code here, to run repeatedly:
   elbowL = analogRead(elbowLpin);
   elbowR = analogRead(elbowRpin);
   shoulderL = analogRead(shoulderLpin);
   shoulderR = analogRead(shoulderRpin);
-  latent1 = analogRead(latent1pin);
-  latent2 = analogRead(latent2pin);
+  nunchuck1.readData();
 
-  patternBuffer.push(elbowL/1023.0);
-  patternBuffer.push(elbowR/1023.0);
-  patternBuffer.push(shoulderL/1023.0);
-  patternBuffer.push(shoulderR/1023.0);
-  patternBuffer.copyToArray(p.data());
+  patternInstBuffer.push(elbowL/1023.0);
+  patternInstBuffer.push(elbowR/1023.0);
+  patternInstBuffer.push(shoulderL/1023.0);
+  patternInstBuffer.push(shoulderR/1023.0);
+  patternInstBuffer.push(nunchuck1.values[4]/255.0);
+  patternInstBuffer.push(nunchuck1.values[5]/255.0);
+  patternInstBuffer.copyToArray(pInst.data());
+
+  patternLatBuffer.push(nunchuck1.values[0]/255.0);
+  patternLatBuffer.push(nunchuck1.values[1]/255.0);
+  patternLatBuffer.push(nunchuck1.values[10]/255.0);
+  patternLatBuffer.push(nunchuck1.values[11]/255.0);
+  patternLatBuffer.copyToArray(pLat.data());
 
   if (Serial.available()) {
+    /*
     byte byteCommand = Serial.read();
     //Serial.println(byteCommand);
     char charCommand = (char)byteCommand;
     //Serial.println(charCommand);
     String command = String(charCommand);
-    
+    */
+    String inputCommand = Serial.readString();
     //String command = Serial.readString();
-    if (command != "") {
-      command = command[0]; //strip out \n
-      Serial.println(command);
+    if (inputCommand != "") {
+      String command = inputCommand[0]; //strip out \n
+      String type = inputCommand[1];
+      Serial.print(command);
+      Serial.println(type);
       if (command == "t") { //train
-        train();
-      } 
+        if(type == "i")
+        {
+          train("i");
+        }
+        else if(type == "l")
+        {
+          train("l");
+        }
+      }
       else if (command == "i") { //toggle inference
-        if (nnMode == NNMODES::TRAINING) {
-          nnMode = NNMODES::INFERENCE;
-          Serial.println("Mode: Inference");
-        }else {
-          nnMode = NNMODES::TRAINING;
-          Serial.println("Mode: Training");
+        if(type == "i")
+        {
+          if (nnMode == NNMODES::TRAINING) {
+            nnMode = NNMODES::INFERENCE;
+            Serial.println("Mode: Instrument Inference");
+          }else {
+            nnMode = NNMODES::TRAINING;
+            Serial.println("Mode: Instrument Training");
+          }
+        }
+        else if(type == "l")
+        {
+          if (nnLatMode == NNMODES::TRAINING) {
+            nnLatMode = NNMODES::INFERENCE;
+            Serial.println("Mode: Latent Inference");
+          }else {
+            nnLatMode = NNMODES::TRAINING;
+            Serial.println("Mode: Latent Training");
+          }
+        }
+      }
+      else if (command == "s") { //status
+        if(type == "i")
+        {
+          printTrainingData("i");
+        }
+        else if(type == "l")
+        {
+          printTrainingData("l");
+        }
+      }
+      else if (command == "r") { //reset training
+        if(type == "i")
+        {
+          resetTraining("i");
+        }
+        else if(type == "l")
+        {
+          resetTraining("l");
+        }
+      }
+      else if (command == "m") { //reset model
+        if(type == "i")
+        {
+          resetModel("i");
+        }
+        else if(type == "l")
+        {
+          resetModel("l");
+        }
+      }
+      else if (command == "u") { //undo last data point
+        if(type == "i")
+        {
+          undoLastTraining("i");   
+        }     
+        else if(type == "l")
+        {
+          undoLastTraining("l");   
         }
       }    
-      else if (command == "s") { //status
-        printTrainingData();
-      }    
-      else if (command == "r") { //reset training
-        resetTraining();
-      }    
-      else if (command == "m") { //reset model
-        resetModel();
-      }    
-      else if (command == "u") { //undo last data point
-        undoLastTraining();        
-      }    
       else if (command == "c") { //save to SD
-        SD.remove("neural.net");
-        bool res = NN.save("neural.net");
-        Serial.print("Network saved: ");
-        Serial.println(res);
-        NN.print();
-      }    
+        if(type == "i")
+        {
+          SD.remove("inst-neural.net");
+          bool res = NNinst.save("inst-neural.net");
+          Serial.print("Network saved: ");
+          Serial.println(res);
+          NNinst.print();
+        }
+        else if(type == "l")
+        {
+          SD.remove("lat-neural.net");
+          bool res = NNlat.save("lat-neural.net");
+          Serial.print("Network saved: ");
+          Serial.println(res);
+          NNlat.print();
+        }
+      } 
       else if (command == "l") { //load from SD
-        bool res = NN.load("neural.net");
-        Serial.print("Network loaded: ");
-        Serial.println(res);
-        NN.print();
-      }    
+        if(type == "i")
+        {
+          bool res = NNinst.load("inst-neural.net");
+          Serial.print("Network loaded: ");
+          Serial.println(res);
+          NNinst.print();
+        }
+        else if(type == "l")
+        {
+          bool res = NNlat.load("lat-neural.net");
+          Serial.print("Network loaded: ");
+          Serial.println(res);
+          NNlat.print();
+        }
+      }
       else if (isDigit(command[0])) {
-        addTrainingPoint(p, command.toInt());
+        if(type == "i")
+        {
+          addTrainingPoint(pInst, command.toInt(), "i");
+        }
+        else if(type == "l")
+        {
+          addTrainingPoint(pLat, command.toInt(), "l");
+        }
       }    
     }
   }
 
   if (nnMode == NNMODES::INFERENCE) {
-    output = NN.FeedForward(p.data());
+    outputInst = NNinst.FeedForward(pInst.data());
 
     /*
     Serial.print("Violin level: ");
@@ -227,18 +433,24 @@ void loop() {
     Serial.println(output[1]);
     */
     
-    for(size_t j=0; j < nOutputs; j++) {
-      Serial.print(output[j], 7);       // Prints the first 7 digits after the comma.
+    for(size_t j=0; j < nInstOutputs; j++) {
+      Serial.print(outputInst[j], 7);       // Prints the first 7 digits after the comma.
       Serial.print("\t");
     }
-    Serial.print(latent1);
-    Serial.print("\t");
-    Serial.print(latent2);
-    Serial.print("\t");
-    Serial.println("");
+    Serial.println(" ");
+  }
+  
+  if (nnLatMode == NNMODES::INFERENCE) {
+    outputLat = NNlat.FeedForward(pLat.data());
+    
+    for(size_t j=0; j < nLatOutputs; j++) {
+      Serial.print(outputLat[j], 7);       // Prints the first 7 digits after the comma.
+      Serial.print("\t");
+    }
+    Serial.println(" ");
   }
 
-
+/* testing prints
   Serial.print("LE: ");
   Serial.println(elbowL);
   Serial.print("RE: ");
@@ -247,7 +459,9 @@ void loop() {
   Serial.println(shoulderL);
   Serial.print("RS: ");
   Serial.println(shoulderR);
-  
-  delay(100);
+  nunchuck1.readData();    // Read inputs and update maps
+	nunchuck1.printInputs(); // Print all inputs
+*/
+  delay(10);
 
 }
