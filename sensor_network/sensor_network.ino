@@ -40,7 +40,6 @@ std::vector<std::vector<float>> expectedInstOutput {
   {1,0,0}, //all violin
   {0,1,0}, //all sax
   {0,0,1}, //all pond sounds
-  {0.5, 0.5, 0} //halfway between violin and sax
 }; 
 
 const size_t nLatInputs=8;
@@ -61,13 +60,13 @@ NNMODES nnLatMode = NNMODES::TRAINING;
 NeuralNetwork NNlat(layersLat, NumberOf(layersLat)); // Creating a Neural-Network with default learning-rates
 
 std::vector<std::vector<float>> expectedLatOutput {
-  {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5},
-  {0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1},
-  {0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0},
-  {1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5},
-  {0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5},
-  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+  {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5}, // at rest, with or without buttons pressed
+  {0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1}, // C + up on joystick = evens up
+  {0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0}, // C + down on joystick = evens down
+  {1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5,1,0.5}, // Z + up on joystick = odds up
+  {0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5,0,0.5}, // Z + down on joystick = odds down
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // both buttons and down
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} // both buttons and up
 }; 
 
 void addTrainingPoint(std::vector<float> x, size_t y, String type) { //training inputs, and index to a set of outputs defined in expectedOutputs
@@ -290,10 +289,10 @@ void loop() {
   patternLatBuffer.push(nunchuck1.values[1]/255.0);
   patternLatBuffer.push(nunchuck1.values[10]/255.0);
   patternLatBuffer.push(nunchuck1.values[11]/255.0);
-  patternLatBuffer.push(nunchuck2.values[0]/255.0);
-  patternLatBuffer.push(nunchuck2.values[1]/255.0);
-  patternLatBuffer.push(nunchuck2.values[10]/255.0);
-  patternLatBuffer.push(nunchuck2.values[11]/255.0);
+  //patternLatBuffer.push(nunchuck2.values[0]/255.0);
+  //patternLatBuffer.push(nunchuck2.values[1]/255.0);
+  //patternLatBuffer.push(nunchuck2.values[10]/255.0);
+  //patternLatBuffer.push(nunchuck2.values[11]/255.0);
   
   patternLatBuffer.copyToArray(pLat.data());
 
@@ -460,10 +459,18 @@ void loop() {
       Serial.print(outputLat[j], 7);       // Prints the first 7 digits after the comma.
       Serial.print("\t");
     }
+    Serial.print(nunchuck2.values[0]);
+    Serial.print("\t");
+    Serial.print(nunchuck2.values[1]);
+    Serial.print("\t");
+    Serial.print(nunchuck2.values[10]);
+    Serial.print("\t");
+    Serial.print(nunchuck2.values[11]);
+    Serial.print("\t");
     Serial.println(" ");
   }
   
-  
+  /*
   Serial.print("LE: ");
   Serial.println(elbowL);
   Serial.print("RE: ");
@@ -474,7 +481,7 @@ void loop() {
   Serial.println(shoulderR);
 	nunchuck1.printInputs(); // Print all inputs
   nunchuck2.printInputs();
-  
+  */
   delay(10);
 
 }
