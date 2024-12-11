@@ -12,12 +12,13 @@
 #include <SD.h>
 #include <SerialFlash.h>
 #include <WiiChuck.h>
-#include <WiiChuck.h>
+#include <WiiChuckOne.h>
 
 Accessory nunchuck1;
+AccessoryOne nunchuck2;
 
 // Neural network setup and functions START
-const size_t nInstInputs=6;
+const size_t nInstInputs=8;
 const size_t nInstOutputs=3;
 const size_t patternInstElements=10;
 const size_t patternInstSize = patternInstElements * nInstInputs;
@@ -42,7 +43,7 @@ std::vector<std::vector<float>> expectedInstOutput {
   {0.5, 0.5, 0} //halfway between violin and sax
 }; 
 
-const size_t nLatInputs=4;
+const size_t nLatInputs=8;
 const size_t nLatOutputs=16;
 const size_t patternLatElements=10;
 const size_t patternLatSize = patternLatElements * nLatInputs;
@@ -233,7 +234,7 @@ void printTrainingData(String type) {
 // instrument sensors
 int elbowLpin = 41;
 int elbowRpin = 40;
-int shoulderLpin = 39; //actual port TBD
+int shoulderLpin = 27; //actual port TBD
 int shoulderRpin = 38; //actual port TBD
 int elbowL;
 int elbowR;
@@ -254,19 +255,13 @@ void setup() {
   }
 
   Serial.begin(115200);
+
   nunchuck1.begin();
-  if (nunchuck1.type == Unknown) {
-		/** If the device isn't auto-detected, set the type explicatly
-		 * 	NUNCHUCK,
-		 WIICLASSIC,
-		 GuitarHeroController,
-		 GuitarHeroWorldTourDrums,
-		 DrumController,
-		 DrawsomeTablet,
-		 Turntable
-		 */
-		nunchuck1.type = NUNCHUCK;
-	}
+  nunchuck1.type = NUNCHUCK;
+  nunchuck2.begin();
+  nunchuck2.type = NUNCHUCKONE;
+  
+
   Serial.setTimeout(1);
 }
 
@@ -279,6 +274,7 @@ void loop() {
   shoulderL = analogRead(shoulderLpin);
   shoulderR = analogRead(shoulderRpin);
   nunchuck1.readData();
+  nunchuck2.readData();
 
   patternInstBuffer.push(elbowL/1023.0);
   patternInstBuffer.push(elbowR/1023.0);
@@ -286,12 +282,19 @@ void loop() {
   patternInstBuffer.push(shoulderR/1023.0);
   patternInstBuffer.push(nunchuck1.values[4]/255.0);
   patternInstBuffer.push(nunchuck1.values[5]/255.0);
+  patternInstBuffer.push(nunchuck2.values[4]/255.0);
+  patternInstBuffer.push(nunchuck2.values[5]/255.0);
   patternInstBuffer.copyToArray(pInst.data());
-
+  
   patternLatBuffer.push(nunchuck1.values[0]/255.0);
   patternLatBuffer.push(nunchuck1.values[1]/255.0);
   patternLatBuffer.push(nunchuck1.values[10]/255.0);
   patternLatBuffer.push(nunchuck1.values[11]/255.0);
+  patternLatBuffer.push(nunchuck2.values[0]/255.0);
+  patternLatBuffer.push(nunchuck2.values[1]/255.0);
+  patternLatBuffer.push(nunchuck2.values[10]/255.0);
+  patternLatBuffer.push(nunchuck2.values[11]/255.0);
+  
   patternLatBuffer.copyToArray(pLat.data());
 
   if (Serial.available()) {
@@ -459,8 +462,8 @@ void loop() {
     }
     Serial.println(" ");
   }
-
-/* testing prints
+  
+  
   Serial.print("LE: ");
   Serial.println(elbowL);
   Serial.print("RE: ");
@@ -469,9 +472,9 @@ void loop() {
   Serial.println(shoulderL);
   Serial.print("RS: ");
   Serial.println(shoulderR);
-  nunchuck1.readData();    // Read inputs and update maps
 	nunchuck1.printInputs(); // Print all inputs
-*/
+  nunchuck2.printInputs();
+  
   delay(10);
 
 }
